@@ -287,7 +287,15 @@ namespace EasySpawner
         {
             if (pickup)
             {
-                Player.m_localPlayer.PickupPrefab(prefab);
+                ItemDrop itemDrop = prefab.GetComponent<ItemDrop>();
+                Player.m_localPlayer.GetInventory().AddItem(
+                  itemDrop.name,
+                  itemDrop.m_itemData.m_stack, 
+                  itemDrop.m_itemData.m_quality, 
+                  itemDrop.m_itemData.m_variant, 
+                  Player.m_localPlayer.GetPlayerID(), 
+                  Player.m_localPlayer.GetPlayerName()
+                );
                 return null;
             }
             else
