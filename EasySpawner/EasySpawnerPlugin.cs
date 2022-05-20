@@ -12,7 +12,7 @@ using EasySpawner.Config;
 
 namespace EasySpawner
 {
-    [BepInPlugin("cooley.easyspawner", "Easy Spawner", "1.5.0")]
+    [BepInPlugin("atticoos.valheim.comfytools.comfyspawner", "Comfy Spawner", "1.5.1")]
     [BepInProcess("valheim.exe")]
     public class EasySpawnerPlugin : BaseUnityPlugin
     {
@@ -30,15 +30,15 @@ namespace EasySpawner
         public static Stack<List<GameObject>> spawnActions = new Stack<List<GameObject>>();
 
         public const string assetBundleName = "EasySpawnerAssetBundle";
-        public const string favouritesFileName = "cooley.easyspawner.favouriteItems.txt";
+        public const string favouritesFileName = "atticoos.valheim.comfytools.comfyspawner.favouriteItems.txt";
 
         public Harmony harmony;
 
         void Awake()
         {
-            Debug.Log("Easy spawner: Easy spawner loaded plugin");
+            Debug.Log("Easy spawner: Comfy spawner loaded plugin");
 
-            harmony = new Harmony("cooley.easyspawner");
+            harmony = new Harmony("atticoos.valheim");
             harmony.PatchAll();
 
             config.ConfigFile = Config;
