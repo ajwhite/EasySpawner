@@ -283,24 +283,42 @@ namespace EasySpawner
             }
         }
 
-        private static GameObject SpawnItem(bool pickup, GameObject prefab, Player player)
-        {
-            if (pickup)
-            {
-                ItemDrop itemDrop = prefab.GetComponent<ItemDrop>();
-                Player.m_localPlayer.GetInventory().AddItem(
-                  itemDrop.name,
-                  itemDrop.m_itemData.m_stack, 
-                  itemDrop.m_itemData.m_quality, 
-                  itemDrop.m_itemData.m_variant, 
-                  Player.m_localPlayer.GetPlayerID(), 
-                  Player.m_localPlayer.GetPlayerName()
-                );
-                return null;
-            }
-            else
-                return Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-        }
+				private static GameObject SpawnItem(bool pickup, GameObject prefab, Player player) {
+						ItemDrop itemDrop = prefab.GetComponent<ItemDrop>();
+						List<Recipe> recipes = ObjectDB.instance.m_recipes;
+						long crafterId = 0L;
+						string crafterName = "";
+						bool shouldIncludeCrafterTags = recipes.Exists(recipe => {
+								if (!recipe.m_item) {
+										return false;
+								}
+								return recipe.m_item.Equals(itemDrop);
+						});
+
+						if (shouldIncludeCrafterTags) {
+								crafterId = Player.m_localPlayer.GetPlayerID();
+								crafterName = Player.m_localPlayer.GetPlayerName();
+								itemDrop.m_itemData.m_crafterID = crafterId;
+								itemDrop.m_itemData.m_crafterName = crafterName;
+						}
+
+						if (pickup) {
+								Player.m_localPlayer.GetInventory().AddItem(
+										itemDrop.name,
+										itemDrop.m_itemData.m_stack,
+										itemDrop.m_itemData.m_quality,
+										itemDrop.m_itemData.m_variant,
+										crafterId,
+										crafterName
+								);
+								return null;
+						} else {
+								itemDrop.m_itemData.m_dropPrefab = prefab;
+								Vector3 position = player.transform.position + player.transform.forward * 2f + Vector3.up;
+								ItemDrop dropped = ItemDrop.DropItem(itemDrop.m_itemData, 1, position, Quaternion.identity);
+								return dropped.gameObject;
+						}
+				}
 
         private void UndoSpawn()
         {
